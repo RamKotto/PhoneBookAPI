@@ -7,6 +7,7 @@ import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 public class RestTest {
@@ -48,13 +49,14 @@ public class RestTest {
                 .contentType(ContentType.JSON)
                 .when().get()
                 .then().statusCode(200)
+                // import static org.hamcrest.Matchers.equalTo;
                 .body("lastName[0]", equalTo("Snow"));
         log.debug("Test finished...");
     }
 
     @Test
-    public void getListOfNames() {
-        List<UserDTO> names = given()
+    public void getListOfUsers() {
+        List<UserDTO> users = given()
                 .when()
                 .baseUri(BASE_URI)
                 .basePath(USERS_PATH)
@@ -63,9 +65,45 @@ public class RestTest {
                 .then()
                 .statusCode(200)
                 .extract().jsonPath().getList("", UserDTO.class);
-        for (UserDTO us : names) {
+
+        for (UserDTO us : users) {
             log.debug(us.getId() + " " + us.getFirstName() + " " + us.getLastName());
         }
+
+        // Assert J (import static org.assertj.core.api.Assertions.assertThat;)
+        assertThat(users).extracting(UserDTO::getFirstName).contains("MarkTwen");
+        assertThat(users).extracting(UserDTO::getFirstName).contains("Mwen");
+    }
+
+    @Test
+    public void createUser() {
+        UserDTO newUser = new UserDTO();
+        newUser.setFirstName("Dima");
+        newUser.setLastName("Saraev");
+
+        UserDTO rs = given()
+                .baseUri(BASE_URI)
+                .basePath(USERS_PATH)
+                .contentType(ContentType.JSON)
+                .body(newUser)
+                .when().post()
+                .then().extract().as(UserDTO.class);
+
+        List<UserDTO> users = given()
+                .when()
+                .baseUri(BASE_URI)
+                .basePath(USERS_PATH)
+                .contentType(ContentType.JSON)
+                .when().get()
+                .then()
+                .statusCode(200)
+                .extract().jsonPath().getList("", UserDTO.class);
+
+        for (UserDTO us : users) {
+            log.debug(us.getId() + " " + us.getFirstName() + " " + us.getLastName());
+        }
+
+        assertThat(users).extracting(UserDTO::getFirstName).contains("Dima");
     }
 
 }
