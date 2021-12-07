@@ -1,4 +1,4 @@
-import Models.UserDTO;
+import dto.UserDTO;
 import io.restassured.http.ContentType;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.Assert;
