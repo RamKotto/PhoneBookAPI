@@ -18,11 +18,22 @@ public class UserApi<T> {
         log.info("Creating new user with params: " + user.getFirstName() + " " + user.getLastName());
         return given()
                 .baseUri(PropertyManager.propHandler(CONFIG, "HOST"))
-                .basePath(PathEnum.GET_USERS.getApiMethod())
+                .basePath(PathEnum.USERS.getApiMethod())
                 .contentType(ContentType.JSON)
                 .body(user)
                 .when().post()
                 .then().extract().as(clazz);
+    }
+
+    public static String createNewUserAndReturnString(UserDTO user) {
+        log.info("Creating new user with params: " + user.getFirstName() + " " + user.getLastName());
+        return given()
+                .baseUri(PropertyManager.propHandler(CONFIG, "HOST"))
+                .basePath(PathEnum.USERS.getApiMethod())
+                .contentType(ContentType.JSON)
+                .body(user)
+                .when().post()
+                .then().extract().asString();
     }
 
     public static List<UserDTO> getListOfUsers() {
@@ -30,7 +41,7 @@ public class UserApi<T> {
         return given()
                 .when()
                 .baseUri(PropertyManager.propHandler(CONFIG, "HOST"))
-                .basePath(PathEnum.GET_USERS.getApiMethod())
+                .basePath(PathEnum.USERS.getApiMethod())
                 .contentType(ContentType.JSON)
                 .when().get()
                 .then()
@@ -42,7 +53,7 @@ public class UserApi<T> {
         log.info("Updating user with id: " + id);
         return given()
                 .baseUri(PropertyManager.propHandler(CONFIG, "HOST"))
-                .basePath(PathEnum.GET_USERS.getApiMethod() + "/" + id)
+                .basePath(PathEnum.USERS.getApiMethod() + "/" + id)
                 .contentType(ContentType.JSON)
                 .body(data)
                 .when().put()
@@ -53,7 +64,7 @@ public class UserApi<T> {
         log.info("Delete user with id: " + id);
         given()
                 .baseUri(PropertyManager.propHandler(CONFIG, "HOST"))
-                .basePath(PathEnum.GET_USERS.getApiMethod() + "/" + id)
+                .basePath(PathEnum.USERS.getApiMethod() + "/" + id)
                 .contentType(ContentType.JSON)
                 .when().delete()
                 .then().statusCode(202);

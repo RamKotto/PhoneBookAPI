@@ -6,6 +6,7 @@ import org.testng.annotations.Test;
 
 import java.util.List;
 
+import static api.UserApi.createNewUser;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -138,5 +139,19 @@ public class RestTest {
         }
 
         Assert.assertFalse(users.contains(rs));
+    }
+
+    @Test
+    public void errorTest() {
+        UserDTO user = new UserDTO("a", "sss");
+        String result = given()
+                .baseUri(BASE_URI)
+                .basePath(USERS_PATH)
+                .contentType(ContentType.JSON)
+                .body(user)
+                .when().post()
+                .then().statusCode(400)
+                .extract().asString();
+        System.out.println(result);
     }
 }

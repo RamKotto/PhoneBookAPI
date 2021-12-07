@@ -76,14 +76,19 @@ public class UserTests {
     }
 
     @Test(dataProvider = "incorrectUserData")
-    public void negativeUserTest(UserDTO user) {
-        // Попытаться создать пользователя с именем меньше двух символов или больше 15,
-        // и убедиться что возвращается ошибка
-        ErrorResponseDTO errorResponseDTO = createNewUser(user, ErrorResponseDTO.class);
-        assertThat(errorResponseDTO)
-                .isNotNull()
-                .extracting(ErrorResponseDTO::getError)
-                .isEqualTo(errorResponseDTO.getError());
+    public void incorrectNameUserTest(UserDTO user) {
+        // Попытаться создать пользователя с именем меньше 2 символов или больше 15,
+        // и убедиться что возвращается ошибка.
+
+        String response = createNewUserAndReturnString(user);
+        log.info(response);
+        List<UserDTO> userList = getListOfUsers();
+        assertThat(userList).extracting(UserDTO::getFirstName).doesNotContain(user.getFirstName());
         log.info("User with name: " + user.getFirstName() + " was not created.");
+
+        // По описанию на Swagger, API должно возвращать ответ в виде "ErrorResponse" и 400 код.
+        // Но возвращает его в виде строки JSON. Пример:
+        // {"firstName":"размер должен быть между 2 и 15"}
+        // Новый пользователь не создается, поэтому тест проходит.
     }
 }
