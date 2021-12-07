@@ -1,3 +1,4 @@
+import dto.ErrorResponseDTO;
 import dto.UserDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.Assert;
@@ -19,6 +20,12 @@ public class UserTests {
     private static final UserDTO secondUser = new UserDTO(
             RandomUtils.getRandomWord(8),
             RandomUtils.getRandomWord(10));
+    private static final UserDTO firstIncorrectUser = new UserDTO(
+            RandomUtils.getRandomWord(1),
+            RandomUtils.getRandomWord(10));
+    private static final UserDTO secondIncorrectUser = new UserDTO(
+            RandomUtils.getRandomWord(20),
+            RandomUtils.getRandomWord(10));
 
     @DataProvider
     public Object[][] userData() {
@@ -31,7 +38,7 @@ public class UserTests {
     @Test(dataProvider = "userData")
     public void crudNewUserTest(UserDTO user) {
         // Создать нового пользователя и убедиться, что он создан
-        UserDTO createdUser = createNewUser(user);
+        UserDTO createdUser = createNewUser(user, UserDTO.class);
         assertThat(createdUser)
                 .isNotNull()
                 .extracting(UserDTO::getFirstName)
@@ -58,5 +65,25 @@ public class UserTests {
         listOfUsers = getListOfUsers();
         assertThat(listOfUsers).extracting(UserDTO::getFirstName).doesNotContain(updatedUser.getFirstName());
         log.info("User with name: " + updatedUser.getFirstName() + " was deleted.");
+    }
+
+    @DataProvider
+    public Object[][] incorrectUserData() {
+        return new Object[][]{
+                {firstIncorrectUser},
+                {secondIncorrectUser},
+        };
+    }
+
+    @Test(dataProvider = "incorrectUserData")
+    public void negativeUserTest(UserDTO user) {
+        // Попытаться создать пользователя с именем меньше двух символов или больше 15,
+        // и убедиться что возвращается ошибка
+        ErrorResponseDTO errorResponseDTO = createNewUser(user, ErrorResponseDTO.class);
+        assertThat(errorResponseDTO)
+                .isNotNull()
+                .extracting(ErrorResponseDTO::getError)
+                .isEqualTo(errorResponseDTO.getError());
+        log.info("User with name: " + user.getFirstName() + " was not created.");
     }
 }

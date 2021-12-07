@@ -12,9 +12,9 @@ import static io.restassured.RestAssured.given;
 import static utils.PropertiesEnum.CONFIG;
 
 @Slf4j
-public class UserApi {
+public class UserApi<T> {
 
-    public static UserDTO createNewUser(UserDTO user) {
+    public static <T> T createNewUser(UserDTO user, Class<T> clazz) {
         log.info("Creating new user with params: " + user.getFirstName() + " " + user.getLastName());
         return given()
                 .baseUri(PropertyManager.propHandler(CONFIG, "HOST"))
@@ -22,7 +22,7 @@ public class UserApi {
                 .contentType(ContentType.JSON)
                 .body(user)
                 .when().post()
-                .then().extract().as(UserDTO.class);
+                .then().extract().as(clazz);
     }
 
     public static List<UserDTO> getListOfUsers() {
