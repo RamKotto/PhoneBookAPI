@@ -1,9 +1,10 @@
 package utils;
 
+import constants.PropertiesEnum;
 import lombok.extern.slf4j.Slf4j;
 import java.io.FileInputStream;
 import java.util.Properties;
-import static utils.PropertiesEnum.CONFIG;
+import static constants.PropertiesEnum.CONFIG;
 
 @Slf4j
 public class PropertyManager {

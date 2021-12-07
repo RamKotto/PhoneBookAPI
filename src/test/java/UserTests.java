@@ -1,4 +1,3 @@
-import dto.ErrorResponseDTO;
 import dto.UserDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.Assert;
@@ -13,25 +12,24 @@ import static steps.UserApiSteps.updateCreatedUser;
 
 @Slf4j
 public class UserTests {
-
-    private static final UserDTO firstUser = new UserDTO(
+    private static final UserDTO FIRST_USER = new UserDTO(
             RandomUtils.getRandomWord(8),
             RandomUtils.getRandomWord(10));
-    private static final UserDTO secondUser = new UserDTO(
+    private static final UserDTO SECOND_USER = new UserDTO(
             RandomUtils.getRandomWord(8),
             RandomUtils.getRandomWord(10));
-    private static final UserDTO firstIncorrectUser = new UserDTO(
+    private static final UserDTO FIRST_INCORRECT_USER = new UserDTO(
             RandomUtils.getRandomWord(1),
             RandomUtils.getRandomWord(10));
-    private static final UserDTO secondIncorrectUser = new UserDTO(
+    private static final UserDTO SECOND_INCORRECT_USER = new UserDTO(
             RandomUtils.getRandomWord(20),
             RandomUtils.getRandomWord(10));
 
     @DataProvider
     public Object[][] userData() {
         return new Object[][]{
-                {firstUser},
-                {secondUser},
+                {FIRST_USER},
+                {SECOND_USER},
         };
     }
 
@@ -70,15 +68,14 @@ public class UserTests {
     @DataProvider
     public Object[][] incorrectUserData() {
         return new Object[][]{
-                {firstIncorrectUser},
-                {secondIncorrectUser},
+                {FIRST_INCORRECT_USER},
+                {SECOND_INCORRECT_USER},
         };
     }
 
     @Test(dataProvider = "incorrectUserData")
     public void incorrectNameUserTest(UserDTO user) {
-        // Попытаться создать пользователя с именем меньше 2 символов или больше 15,
-        // и убедиться что возвращается ошибка.
+        // Попытаться создать пользователя с именем меньше 2 символов или больше 15.
 
         String response = createNewUserAndReturnString(user);
         log.info(response);
@@ -86,8 +83,8 @@ public class UserTests {
         assertThat(userList).extracting(UserDTO::getFirstName).doesNotContain(user.getFirstName());
         log.info("User with name: " + user.getFirstName() + " was not created.");
 
-        // По описанию на Swagger, API должно возвращать ответ в виде "ErrorResponse" и 400 код.
-        // Но возвращает его в виде строки JSON. Пример:
+        // По описанию на Swagger - API должно возвращать ответ в виде "ErrorResponse" и 400 код.
+        // Но возвращает его в виде строки JSON:
         // {"firstName":"размер должен быть между 2 и 15"}
         // Новый пользователь не создается, поэтому тест проходит.
     }

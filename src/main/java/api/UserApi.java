@@ -1,6 +1,7 @@
 package api;
 
 import constants.PathEnum;
+import constants.StatusCodeEnum;
 import dto.UserDTO;
 import io.restassured.http.ContentType;
 import lombok.extern.slf4j.Slf4j;
@@ -9,10 +10,10 @@ import utils.PropertyManager;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
-import static utils.PropertiesEnum.CONFIG;
+import static constants.PropertiesEnum.CONFIG;
 
 @Slf4j
-public class UserApi<T> {
+public class UserApi {
 
     public static <T> T createNewUser(UserDTO user, Class<T> clazz) {
         log.info("Creating new user with params: " + user.getFirstName() + " " + user.getLastName());
@@ -45,7 +46,7 @@ public class UserApi<T> {
                 .contentType(ContentType.JSON)
                 .when().get()
                 .then()
-                .statusCode(200)
+                .statusCode(StatusCodeEnum.SC_OK.getStatusCode())
                 .extract().jsonPath().getList("", UserDTO.class);
     }
 
@@ -67,6 +68,6 @@ public class UserApi<T> {
                 .basePath(PathEnum.USERS.getApiMethod() + "/" + id)
                 .contentType(ContentType.JSON)
                 .when().delete()
-                .then().statusCode(202);
+                .then().statusCode(StatusCodeEnum.ACCEPTED.getStatusCode());
     }
 }
