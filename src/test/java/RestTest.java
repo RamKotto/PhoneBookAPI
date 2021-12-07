@@ -90,6 +90,12 @@ public class RestTest {
                 .when().post()
                 .then().extract().as(UserDTO.class);
 
+        // Assert J (import static org.assertj.core.api.Assertions.assertThat;)
+        assertThat(rs)
+                .isNotNull()
+                .extracting(UserDTO::getFirstName)
+                .isEqualTo(rs.getFirstName());
+
         List<UserDTO> users = given()
                 .when()
                 .baseUri(BASE_URI)
